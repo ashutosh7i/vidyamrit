@@ -24,6 +24,8 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
+import { DASHBOARD_ROUTE_PATHS } from "@/routes";
+import { useNavigate } from "react-router";
 
 export function OpenAssessments({
   openAssessments,
@@ -34,6 +36,7 @@ export function OpenAssessments({
   }[];
 }) {
   const { isMobile } = useSidebar();
+  const navigator = useNavigate();
 
   return (
     <SidebarGroup className="group-data-[collapsible=icon]:hidden">
@@ -43,7 +46,9 @@ export function OpenAssessments({
           <SidebarMenuItem key={item.name}>
             <SidebarMenuButton
               onClick={() => {
-                alert("opening assessment: " + item.assessment_id);
+                navigator(
+                  `${DASHBOARD_ROUTE_PATHS.baselineAssessments}?id=${item.assessment_id}`
+                );
               }}
               asChild
             >

@@ -10,12 +10,11 @@ import {
   User,
   EllipsisVertical,
   Info,
-  BookOpen,
-  Bot,
-  Settings2,
-  SquareTerminal,
+  UserStar,
+  School,
+  UserPen,
+  GraduationCap,
 } from "lucide-react";
-
 import { SidebarItems } from "@/components/SidebarItems";
 import { OpenAssessments } from "@/components/OpenAssessments";
 import { SchoolSwitcher } from "@/components/SchoolSwitcher";
@@ -37,98 +36,69 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { getCurrentUser, logout } from "@/services/auth";
 import { Button } from "@/components/ui/button";
+import { Avatar } from "@/components/ui/avatar";
 import { useTranslation } from "react-i18next";
 import { LanguageToggleButton } from "./LanguageToggleButton";
-import { Avatar } from "@/components/ui/avatar";
+import { getCurrentUser, logout } from "@/services/auth";
+import { AUTH_ROUTE_PATHS, DASHBOARD_ROUTE_PATHS } from "@/routes";
 
 // This is sample data.
 const data = {
   navMain: [
     {
-      title: "Playground",
+      title: "Super Admin",
       url: "#",
-      icon: SquareTerminal,
+      icon: UserStar,
       items: [
         {
-          title: "History",
-          url: "/test",
+          title: "Manage Schools",
+          url: DASHBOARD_ROUTE_PATHS.schools,
         },
         {
-          title: "Starred",
-          url: "#",
-        },
-        {
-          title: "Settings",
-          url: "#",
+          title: "Manage School Admins",
+          url: DASHBOARD_ROUTE_PATHS.schoolAdmin,
         },
       ],
     },
     {
-      title: "Models",
+      title: "School Admin",
       url: "#",
-      icon: Bot,
+      icon: School,
       items: [
         {
-          title: "Genesis",
-          url: "#",
+          title: "Manage Mentors",
+          url: DASHBOARD_ROUTE_PATHS.mentors,
         },
         {
-          title: "Explorer",
-          url: "#",
+          title: "Manage Students",
+          url: DASHBOARD_ROUTE_PATHS.students,
         },
         {
-          title: "Quantum",
-          url: "#",
+          title: "Manage Cohorts",
+          url: DASHBOARD_ROUTE_PATHS.cohorts,
         },
       ],
     },
     {
-      title: "Documentation",
+      title: "Mentor",
       url: "#",
-      icon: BookOpen,
+      icon: UserPen,
       items: [
         {
-          title: "Introduction",
-          url: "#",
+          title: "Baseline Assessments Page",
+          url: DASHBOARD_ROUTE_PATHS.baselineAssessments,
         },
         {
-          title: "Get Started",
-          url: "#",
-        },
-        {
-          title: "Tutorials",
-          url: "#",
-        },
-        {
-          title: "Changelog",
-          url: "#",
+          title: "Student Reports",
+          url: DASHBOARD_ROUTE_PATHS.studentReports,
         },
       ],
     },
     {
-      title: "Settings",
-      url: "#",
-      icon: Settings2,
-      items: [
-        {
-          title: "General",
-          url: "#",
-        },
-        {
-          title: "Team",
-          url: "#",
-        },
-        {
-          title: "Billing",
-          url: "#",
-        },
-        {
-          title: "Limits",
-          url: "#",
-        },
-      ],
+      title: "Students",
+      url: DASHBOARD_ROUTE_PATHS.studentReports,
+      icon: GraduationCap,
     },
   ],
   openAssessments: [
@@ -160,7 +130,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
   const handleLogout = async () => {
     await logout();
-    window.location.href = "/login";
+    window.location.href = AUTH_ROUTE_PATHS.logout;
   };
   return (
     <Sidebar collapsible="icon" {...props}>

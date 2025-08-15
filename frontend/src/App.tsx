@@ -5,6 +5,8 @@ import { AuthProvider } from "./providers/AuthProvider";
 import "./lib/i18n";
 import { Toaster } from "@/components/ui/sonner";
 //
+import { AUTH_ROUTE_PATHS, DASHBOARD_ROUTE_PATHS } from "@/routes";
+//
 import ProtectedRoute from "./components/ProtectedRoute";
 import NotFoundComponent from "./components/NotFound";
 //
@@ -14,15 +16,21 @@ import LogoutPage from "./pages/auth/LogoutPage";
 //
 import DashboardLayout from "./components/DashboardLayout";
 import DashboardPage from "./pages/dashboard/DashboardPage";
-
+//
 import LandingPage from "./pages/public/LandingPage";
+import ManageSchoolAdmins from "./pages/dashboard/ManageSchoolAdmins";
+import ManageMentors from "./pages/dashboard/ManageMentors";
+import ManageStudents from "./pages/dashboard/ManageStudents";
+import ManageSchools from "./pages/dashboard/ManageSchools";
+import ManageCohorts from "./pages/dashboard/ManageCohorts";
+import BaselineAssessmentsPage from "./pages/dashboard/BaselineAssessmentsPage";
+import StudentsPage from "./pages/dashboard/StudentsPage";
 
 const router = createBrowserRouter([
   {
     path: "/",
     Component: () => <LandingPage />,
   },
-
   // 404 not found
   {
     path: "*",
@@ -30,15 +38,15 @@ const router = createBrowserRouter([
   },
   // Auth routes
   {
-    path: "/login",
+    path: AUTH_ROUTE_PATHS.login,
     Component: () => <LoginPage />,
   },
   {
-    path: "/register",
+    path: AUTH_ROUTE_PATHS.register,
     Component: () => <RegisterPage />,
   },
   {
-    path: "/logout",
+    path: AUTH_ROUTE_PATHS.logout,
     Component: () => <LogoutPage />,
   },
   // Protected route with outlet for dashboard sidebar and layout
@@ -52,8 +60,36 @@ const router = createBrowserRouter([
     ),
     children: [
       {
-        path: "/dashboard",
+        path: DASHBOARD_ROUTE_PATHS.dashboard,
         element: <DashboardPage />,
+      },
+      {
+        path: DASHBOARD_ROUTE_PATHS.schools,
+        element: <ManageSchools />,
+      },
+      {
+        path: DASHBOARD_ROUTE_PATHS.schoolAdmin,
+        element: <ManageSchoolAdmins />,
+      },
+      {
+        path: DASHBOARD_ROUTE_PATHS.mentors,
+        element: <ManageMentors />,
+      },
+      {
+        path: DASHBOARD_ROUTE_PATHS.students,
+        element: <ManageStudents />,
+      },
+      {
+        path: DASHBOARD_ROUTE_PATHS.cohorts,
+        element: <ManageCohorts />,
+      },
+      {
+        path: DASHBOARD_ROUTE_PATHS.baselineAssessments,
+        element: <BaselineAssessmentsPage />,
+      },
+      {
+        path: DASHBOARD_ROUTE_PATHS.studentReports,
+        element: <StudentsPage />,
       },
     ],
   },
