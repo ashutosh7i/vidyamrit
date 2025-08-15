@@ -9,14 +9,14 @@ import {
   Star,
   Quote,
 } from "lucide-react";
-import Navbar from "./Navbar";
-import Footer from "./Footer";
+import PublicNavbar from "@/components/PublicNavbar";
+import PublicFooter from "@/components/PublicFooter";
 import Scroll from "@/components/ui/scroll";
 
-export default function VidyamritLanding() {
+export default function LandingPage() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-amber-50 to-white">
-      <Navbar />
+      <PublicNavbar />
       {/* Hero Section */}
       <section className="relative px-4 min-h-[calc(100dvh-theme(spacing.16))] flex items-center justify-center">
         <div className="max-w-6xl mx-auto text-center">
@@ -392,7 +392,7 @@ export default function VidyamritLanding() {
         </div>
       </section>
 
-      <Footer />
+      <PublicFooter />
     </div>
   );
 }

@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Menu, X } from "lucide-react";
 import { useState } from "react";
 
-export default function Navbar() {
+export default function PublicNavbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (

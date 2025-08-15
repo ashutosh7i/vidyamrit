@@ -9,7 +9,7 @@ import {
   Linkedin,
 } from "lucide-react";
 
-export default function Footer() {
+export default function PublicFooter() {
   return (
     <footer className="bg-gray-900 text-white">
       <div className="max-w-6xl mx-auto px-4 py-12">
