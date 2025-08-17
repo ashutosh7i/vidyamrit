@@ -9,7 +9,8 @@
     "start": "ts-node src/index.ts",
     "dev": "tsx watch src/index.ts",
     "build": "tsc",
-    "serve": "node dist/index.js"
+    "serve": "node dist/index.js",
+    "bootstrapSuperAdmin": "ts-node src/utils/bootstrapSuperAdmin.ts"
   },
   "devDependencies": {
     "@types/cors": "^2.8.19",

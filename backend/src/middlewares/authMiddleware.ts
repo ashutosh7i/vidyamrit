@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { getAuth } from "firebase-admin/auth";
+import { auth } from "../configs/firebaseAdmin";
 import User from "../models/UserModel";
 
 export const authMiddleware = async (req: Request, res: Response, next: NextFunction) => {
@@ -7,10 +7,10 @@ export const authMiddleware = async (req: Request, res: Response, next: NextFunc
         const token = req.headers.authorization?.split(" ")[1];
         if (!token) return res.status(401).json({ error: "No token provided" });
 
-        const decoded = await getAuth().verifyIdToken(token);
+        const decoded = await auth.verifyIdToken(token);
 
         const user = await User.findOne({ uid: decoded.uid });
-        if (!user) return res.status(403).json({ error: "User not found" });
+        if (!user) return res.status(403).json({ error: "User not found in database" });
 
         req.user = user;
         next();
