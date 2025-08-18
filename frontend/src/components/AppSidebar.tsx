@@ -3,18 +3,10 @@
 
 "use client";
 
-import { useEffect, useState } from "react";
-
-import {
-  LogOut,
-  User,
-  EllipsisVertical,
-  Info,
-  UserStar,
-  School,
-  UserPen,
-  GraduationCap,
-} from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
+import { useRoleAccess } from "@/hooks/useRoleAccess";
+import { roleNavigation } from "@/config/roleNavigation";
+import { LogOut, User, EllipsisVertical, Info } from "lucide-react";
 import { SidebarItems } from "@/components/SidebarItems";
 import { OpenAssessments } from "@/components/OpenAssessments";
 import { SchoolSwitcher } from "@/components/SchoolSwitcher";
@@ -40,67 +32,10 @@ import { Button } from "@/components/ui/button";
 import { Avatar } from "@/components/ui/avatar";
 import { useTranslation } from "react-i18next";
 import { LanguageToggleButton } from "./LanguageToggleButton";
-import { getCurrentUser, logout } from "@/services/auth";
-import { AUTH_ROUTE_PATHS, DASHBOARD_ROUTE_PATHS } from "@/routes";
+import { logout } from "@/services/auth";
+import { AUTH_ROUTE_PATHS } from "@/routes";
 
-// This is sample data.
 const data = {
-  navMain: [
-    {
-      title: "Super Admin",
-      url: "#",
-      icon: UserStar,
-      items: [
-        {
-          title: "Manage Schools",
-          url: DASHBOARD_ROUTE_PATHS.schools,
-        },
-        {
-          title: "Manage School Admins",
-          url: DASHBOARD_ROUTE_PATHS.schoolAdmin,
-        },
-      ],
-    },
-    {
-      title: "School Admin",
-      url: "#",
-      icon: School,
-      items: [
-        {
-          title: "Manage Mentors",
-          url: DASHBOARD_ROUTE_PATHS.mentors,
-        },
-        {
-          title: "Manage Students",
-          url: DASHBOARD_ROUTE_PATHS.students,
-        },
-        {
-          title: "Manage Cohorts",
-          url: DASHBOARD_ROUTE_PATHS.cohorts,
-        },
-      ],
-    },
-    {
-      title: "Mentor",
-      url: "#",
-      icon: UserPen,
-      items: [
-        {
-          title: "Baseline Assessments Page",
-          url: DASHBOARD_ROUTE_PATHS.baselineAssessments,
-        },
-        {
-          title: "Student Reports",
-          url: DASHBOARD_ROUTE_PATHS.studentReports,
-        },
-      ],
-    },
-    {
-      title: "Students",
-      url: DASHBOARD_ROUTE_PATHS.studentReports,
-      icon: GraduationCap,
-    },
-  ],
   openAssessments: [
     {
       name: "assessment001",
@@ -117,16 +52,19 @@ const data = {
   ],
 };
 
+import { useMemo } from "react";
+
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { t } = useTranslation();
-  const [user, setUser] = useState<{ name: string; email: string } | null>(
-    null
-  );
+  const { user } = useAuth();
+  const { canAccessRoles } = useRoleAccess();
   const { isMobile } = useSidebar();
+  const accessibleRoles = canAccessRoles();
 
-  useEffect(() => {
-    getCurrentUser().then(setUser);
-  }, []);
+  const navigationItems = useMemo(
+    () => accessibleRoles.map((role) => roleNavigation[role]).filter(Boolean),
+    [accessibleRoles]
+  );
 
   const handleLogout = async () => {
     await logout();
@@ -138,7 +76,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <SchoolSwitcher />
       </SidebarHeader>
       <SidebarContent>
-        <SidebarItems items={data.navMain} />
+        <SidebarItems items={navigationItems} />
         <OpenAssessments openAssessments={data.openAssessments} />
       </SidebarContent>
       <SidebarFooter>

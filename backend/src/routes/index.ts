@@ -20,7 +20,7 @@ router.use(authMiddleware);
 router.use('/users', userRoutes);
 router.use('/super-admin', superAdminRouter);
 router.use('/schools', schoolRouter);
-router.use('/school-admin', schoolAdminRouter);
+router.use('/school-admins', schoolAdminRouter);
 router.use('/mentors', mentorRouter);
 router.use('/students', studentRouter);
 

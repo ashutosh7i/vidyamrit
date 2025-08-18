@@ -1,12 +1,19 @@
-import React from "react";
-import { Navigate } from "react-router";
+import { Navigate, useLocation } from "react-router";
 import { useAuth } from "../hooks/useAuth";
+import { useRoleAccess } from "../hooks/useRoleAccess";
+import { UserRole } from "../types/user";
 import { Spinner } from "@/components/ui/spinner";
+import { AUTH_ROUTE_PATHS } from "@/routes";
 
-const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({
-  children,
-}) => {
+interface ProtectedRouteProps {
+  children: React.ReactNode;
+  requiredRole?: UserRole;
+}
+
+const ProtectedRoute = ({ children, requiredRole }: ProtectedRouteProps) => {
   const { user, loading } = useAuth();
+  const { hasAccess } = useRoleAccess();
+  const location = useLocation();
 
   if (loading) {
     return (
@@ -17,7 +24,17 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({
   }
 
   if (!user) {
-    return <Navigate to="/login" replace />;
+    return (
+      <Navigate
+        to={AUTH_ROUTE_PATHS.login}
+        state={{ from: location }}
+        replace
+      />
+    );
+  }
+
+  if (requiredRole && !hasAccess(requiredRole)) {
+    return <Navigate to="/dashboard" replace />;
   }
 
   return <>{children}</>;

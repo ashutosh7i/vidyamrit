@@ -12,11 +12,20 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export default function RegisterPage() {
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [role, setRole] = useState("mentor");
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -32,7 +41,7 @@ export default function RegisterPage() {
     }
     setLoading(true);
     try {
-      await signUp(email, password);
+      await signUp(email, password, name, role);
       setSuccess("Account created! Redirecting to login...");
       setTimeout(() => navigate("/login"), 1500);
     } catch (err: unknown) {
@@ -59,6 +68,17 @@ export default function RegisterPage() {
         </CardHeader>
         <CardContent className="space-y-4">
           <form className="space-y-4" onSubmit={handleSignup}>
+            <div className="space-y-2">
+              <Label htmlFor="name">Full Name</Label>
+              <Input
+                id="name"
+                type="text"
+                placeholder="John Doe"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                required
+              />
+            </div>
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
               <Input
@@ -91,6 +111,19 @@ export default function RegisterPage() {
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 required
               />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="role">Role</Label>
+              <Select value={role} onValueChange={setRole}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select your role" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="mentor">Mentor</SelectItem>
+                  <SelectItem value="school_admin">School Admin</SelectItem>
+                  <SelectItem value="super_admin">Super Admin</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
             {error && (
               <p className="text-red-500 text-center text-sm">{error}</p>

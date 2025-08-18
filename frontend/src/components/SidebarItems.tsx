@@ -18,20 +18,13 @@ import {
 } from "@/components/ui/sidebar";
 import { Link, useNavigate } from "react-router";
 
-export function SidebarItems({
-  items,
-}: {
-  items: {
-    title: string;
-    url: string;
-    icon?: LucideIcon;
-    isActive?: boolean;
-    items?: {
-      title: string;
-      url: string;
-    }[];
-  }[];
-}) {
+import { NavItem } from "@/types/navigation";
+
+interface SidebarItemsProps {
+  items: NavItem[];
+}
+
+export function SidebarItems({ items }: SidebarItemsProps) {
   const navigate = useNavigate();
   return (
     <SidebarGroup>

@@ -6,7 +6,7 @@ function BaselineAssessmentsPage() {
 
   return (
     <div>
-      <h1>Baseline Assessments Page</h1>
+      <h1>Baseline Assessments</h1>
       <p>Assessment ID: {id}</p>
     </div>
   );

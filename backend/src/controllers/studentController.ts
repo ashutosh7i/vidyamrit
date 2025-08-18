@@ -1,77 +1,57 @@
 import { Response } from 'express';
-import { auth } from '../configs/firebaseAdmin';
 import User from '../models/UserModel';
 import { UserRole } from '../configs/roles';
 import { AuthRequest } from '../types/auth';
-
-import { Request } from 'express';
 import { CreateUserRequest, UpdateUserRequest, UserParams } from '../types/requests';
 
 export const createStudent = async (
-    req: AuthRequest<{}, {}, CreateUserRequest>,
+    req: AuthRequest<{}, {}, Omit<CreateUserRequest, 'password'>>,
     res: Response
 ) => {
-    let firebaseUser = null;
-
     try {
-        const { name, email, password, schoolId } = req.body;
+        const { name, email, uid, schoolId } = req.body;
         const userSchoolId = req.user && req.user.role !== UserRole.SUPER_ADMIN ? req.user.schoolId : schoolId;
 
         if (!userSchoolId) {
             return res.status(400).json({ error: "School ID is required" });
         }
 
-        // Check if user already exists
-        const existingUser = await User.findOne({ email });
-        if (existingUser) {
-            return res.status(400).json({ error: "User already exists" });
-        }
-
-        // Create Firebase user
-        firebaseUser = await auth.createUser({
-            email,
-            password,
-            displayName: name,
+        // Check if student already exists
+        const existingStudent = await User.findOne({ 
+            $or: [
+                { email, role: UserRole.STUDENT },
+                { uid, role: UserRole.STUDENT }
+            ]
         });
-        
-        try {
-            // Create MongoDB user
-            const user = new User({
-                uid: firebaseUser.uid,
-                name,
-                email: firebaseUser.email,
-                role: UserRole.STUDENT,
-                schoolId: userSchoolId,
+        if (existingStudent) {
+            return res.status(400).json({ 
+                error: existingStudent.email === email 
+                    ? "Student with this email already exists"
+                    : "Student with this roll number already exists"
             });
-
-            await user.save();
-
-            const populatedUser = await user.populate('schoolId', 'name');
-
-            res.status(201).json({
-                id: populatedUser._id,
-                name: populatedUser.name,
-                email: populatedUser.email,
-                role: populatedUser.role,
-                schoolId: populatedUser.schoolId
-            });
-        } catch (mongoError) {
-            // If MongoDB save fails, clean up Firebase user
-            if (firebaseUser) {
-                try {
-                    await auth.deleteUser(firebaseUser.uid);
-                    console.log(`Cleaned up: Firebase user ${firebaseUser.uid} deleted due to MongoDB error`);
-                } catch (deleteErr) {
-                    console.error("Failed to delete Firebase user during cleanup:", deleteErr);
-                }
-            }
-            throw mongoError;
         }
-    } catch (error: any) {
+
+        // Create student in MongoDB with provided UID as roll number
+        const student = new User({
+            uid,  // Use provided UID as roll number
+            name,
+            email,
+            role: UserRole.STUDENT,
+            schoolId: userSchoolId
+        });
+
+        await student.save();
+        const populatedStudent = await student.populate('schoolId', 'name');
+
+        res.status(201).json({
+            _id: populatedStudent._id,
+            name: populatedStudent.name,
+            email: populatedStudent.email,
+            role: populatedStudent.role,
+            schoolId: populatedStudent.schoolId
+        });
+    } catch (error) {
         console.error('Error in student creation:', error);
-        if (error?.code === 'auth/email-already-exists') {
-            return res.status(400).json({ error: "Email already exists in Firebase" });
-        }
         res.status(500).json({ error: "Failed to create student" });
     }
 };
@@ -107,9 +87,9 @@ export const getStudent = async (
     res: Response
 ) => {
     try {
-        const { uid } = req.params;
+        const { id } = req.params;
         const query: any = { 
-            uid, 
+            _id: id, 
             role: UserRole.STUDENT 
         };
 
@@ -138,32 +118,17 @@ export const updateStudent = async (
     res: Response
 ) => {
     try {
-        const { uid } = req.params;
+        const { id } = req.params;
         const { name, email } = req.body;
 
-        const query: any = { uid, role: UserRole.STUDENT };
+        const query: any = { _id: id, role: UserRole.STUDENT };
         if (req.user && req.user.role !== UserRole.SUPER_ADMIN) {
             query.schoolId = req.user.schoolId;
         }
 
-        // Find the student first
-        const student = await User.findOne(query);
-        if (!student) {
-            return res.status(404).json({ error: "Student not found" });
-        }
-
-        // Update in Firebase first
-        const updateData: { displayName?: string; email?: string } = {};
-        if (name) updateData.displayName = name;
-        if (email) updateData.email = email;
-
-        if (Object.keys(updateData).length > 0) {
-            await auth.updateUser(uid, updateData);
-        }
-
-        // Then update in MongoDB
-        const updatedUser = await User.findOneAndUpdate(
-            { uid },
+        // Update the student record
+        const updatedStudent = await User.findOneAndUpdate(
+            query,
             { 
                 ...(name && { name }),
                 ...(email && { email })
@@ -171,23 +136,20 @@ export const updateStudent = async (
             { new: true }
         ).populate('schoolId', 'name');
 
-        if (!updatedUser) {
-            throw new Error("User not found after update");
+        if (!updatedStudent) {
+            return res.status(404).json({ error: "Student not found" });
         }
 
         res.json({
-            id: updatedUser._id,
-            name: updatedUser.name,
-            email: updatedUser.email,
-            role: updatedUser.role,
-            schoolId: updatedUser.schoolId
+            _id: updatedStudent._id,
+            name: updatedStudent.name,
+            email: updatedStudent.email,
+            role: updatedStudent.role,
+            schoolId: updatedStudent.schoolId
         });
 
-    } catch (error: any) {
+    } catch (error) {
         console.error('Error updating student:', error);
-        if (error?.code === 'auth/email-already-exists') {
-            return res.status(400).json({ error: "Email already exists" });
-        }
         res.status(500).json({ error: "Failed to update student" });
     }
 };
@@ -197,21 +159,17 @@ export const deleteStudent = async (
     res: Response
 ) => {
     try {
-        const { uid } = req.params;
-        const query: any = { uid, role: UserRole.STUDENT };
+        const { id } = req.params;
+        const query: any = { _id: id, role: UserRole.STUDENT };
         
         if (req.user && req.user.role !== UserRole.SUPER_ADMIN) {
             query.schoolId = req.user.schoolId;
         }
 
-        // Delete from MongoDB first
-        const deletedUser = await User.findOneAndDelete(query);
-        if (!deletedUser) {
+        const deletedStudent = await User.findOneAndDelete(query);
+        if (!deletedStudent) {
             return res.status(404).json({ error: "Student not found" });
         }
-
-        // Then delete from Firebase
-        await auth.deleteUser(uid);
 
         res.json({ message: "Student deleted successfully" });
     } catch (error) {
