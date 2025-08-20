@@ -158,7 +158,7 @@ export const updateMentor = async (
         if (email) updateData.email = email;
 
         if (Object.keys(updateData).length > 0) {
-            await auth.updateUser(uid, updateData);
+            await auth.updateUser(mentor.uid, updateData);
         }
 
         // Then update in MongoDB
@@ -213,7 +213,7 @@ export const deleteMentor = async (
         }
 
         // Then delete from Firebase
-        await auth.deleteUser(uid);
+        await auth.deleteUser(deletedUser.uid);
 
         res.json({ message: "Mentor deleted successfully" });
     } catch (error) {

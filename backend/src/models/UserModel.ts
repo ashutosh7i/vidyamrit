@@ -6,7 +6,7 @@ export interface IUser extends Document {
     name: string;
     email: string;
     role: UserRole;
-    schoolId?: mongoose.Types.ObjectId;
+    schoolId?: mongoose.Types.ObjectId | null;
     createdAt: Date;
     updatedAt: Date;
 }

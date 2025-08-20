@@ -15,5 +15,6 @@ export interface UpdateUserRequest {
 
 // Add params types
 export interface UserParams {
-    id: string;  // Using MongoDB _id instead of Firebase uid
+    id?: string;   // MongoDB _id
+    uid?: string;  // Firebase UID
 }
