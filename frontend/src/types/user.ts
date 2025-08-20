@@ -3,6 +3,7 @@ export enum UserRole {
     SCHOOL_ADMIN = 'school_admin',
     MENTOR = 'mentor'
 }
+export type UserRoleType = 'super_admin' | 'school_admin' | 'mentor';
 
 // Base user interface that matches MongoDB model
 export interface BaseUser {

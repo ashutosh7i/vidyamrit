@@ -3,6 +3,7 @@ import { apiUrl, authAxios } from './index';
 const baseUrl = `${apiUrl}/students`;
 
 export interface Student {
+    uid: string;
     _id: string;
     name: string;
     email: string;

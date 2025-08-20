@@ -132,7 +132,7 @@ function ManageStudents() {
     setFormData({
       name: student.name,
       email: student.email,
-      password: "", // Password is not included in edit
+      uid: student.uid,
       schoolId: student.schoolId._id,
     });
     setIsOpen(true);
@@ -144,7 +144,7 @@ function ManageStudents() {
     setFormData({
       name: "",
       email: "",
-      password: "",
+      uid: "",
       schoolId: "",
     });
   };

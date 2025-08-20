@@ -41,13 +41,25 @@ export function SchoolSwitcher() {
 
   // For non-super-admin users, find and set their assigned school
   React.useEffect(() => {
-    if (user && user.role !== UserRole.SUPER_ADMIN && user.schoolId) {
-      const assignedSchool = schools.find((s) => s._id === user.schoolId);
-      if (assignedSchool) {
-        setActiveSchool(assignedSchool);
+    if (
+      user &&
+      user.role !== UserRole.SUPER_ADMIN &&
+      user.schoolId &&
+      typeof user.schoolId === "object"
+    ) {
+      const assignedSchool = schools.find((s) => s._id === user.schoolId._id);
+      if (assignedSchool && assignedSchool._id) {
+        setActiveSchool({
+          ...assignedSchool,
+          _id: assignedSchool._id || "",
+        });
       }
     } else if (schools.length > 0 && !activeSchool) {
-      setActiveSchool(schools[0]);
+      const firstSchool = schools[0];
+      setActiveSchool({
+        ...firstSchool,
+        _id: firstSchool._id || "",
+      });
     }
   }, [user, schools, activeSchool]);
 
@@ -108,7 +120,9 @@ export function SchoolSwitcher() {
             {schools.map((school, index) => (
               <DropdownMenuItem
                 key={school._id}
-                onClick={() => setActiveSchool(school)}
+                onClick={() =>
+                  setActiveSchool({ ...school, _id: school._id || "" })
+                }
                 className="gap-2 p-2"
               >
                 <div className="flex size-6 items-center justify-center rounded-md border">

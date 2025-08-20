@@ -64,7 +64,7 @@ function ManageSchoolAdmins() {
         description: "School admin created successfully",
       });
     },
-  onError: () => {
+    onError: () => {
       toast({
         title: "Error",
         description: "Failed to create school admin",
@@ -83,7 +83,7 @@ function ManageSchoolAdmins() {
         description: "School admin deleted successfully",
       });
     },
-  onError: () => {
+    onError: () => {
       toast({
         title: "Error",
         description: "Failed to delete school admin",

@@ -1,5 +1,6 @@
 import { useContext } from "react";
 import { AuthContext } from "../../contexts/AuthContext";
+import { UserRole } from "@/types/user";
 
 function DashboardPage() {
   const { user, loading } = useContext(AuthContext) || {};
@@ -27,9 +28,9 @@ function DashboardPage() {
           <p>
             <span className="font-medium">Role:</span> {user.role}
           </p>
-          {user.schoolId && (
+          {user.role !== UserRole.SUPER_ADMIN && user.schoolId && (
             <p>
-              <span className="font-medium">School ID:</span> {user.schoolId}
+              <span className="font-medium">School:</span> {user.schoolId.name} ({user.schoolId._id})
             </p>
           )}
         </div>

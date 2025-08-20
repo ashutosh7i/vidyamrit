@@ -25,7 +25,7 @@ export interface CreateMentorDTO {
 export interface UpdateMentorDTO {
     name?: string;
     email?: string;
-    schoolId?: string;
+    schoolId?: string | null;
 }
 
 export const createMentor = async (data: CreateMentorDTO): Promise<Mentor> => {

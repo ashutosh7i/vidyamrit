@@ -11,7 +11,7 @@ import {
 } from "@/services/mentors";
 import { getSchools } from "@/services/schools";
 import { useAuth } from "@/hooks/useAuth";
-import { UserRole } from "@/lib/types";
+import { UserRole } from "@/types/user";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -75,8 +75,8 @@ function ManageMentors() {
       // Filter mentors based on user role and school
       if (user?.role === UserRole.SUPER_ADMIN) {
         return data; // Show all mentors for super admin
-      } else if (user?.schoolId) {
-        return data.filter((mentor) => mentor.schoolId._id === user.schoolId);
+      } else if (user && String(user.role) !== 'super_admin' && user.schoolId && typeof user.schoolId === "object") {
+        return data.filter((mentor) => mentor.schoolId._id === user.schoolId._id);
       }
       return [];
     },
@@ -90,8 +90,8 @@ function ManageMentors() {
       // Filter schools based on user role
       if (user?.role === UserRole.SUPER_ADMIN) {
         return data; // Show all schools for super admin
-      } else if (user?.schoolId) {
-        return data.filter((school) => school._id === user.schoolId);
+      } else if (user && String(user.role) !== 'super_admin' && user.schoolId && typeof user.schoolId === "object") {
+        return data.filter((school) => school._id === user.schoolId._id);
       }
       return [];
     },
@@ -139,9 +139,10 @@ function ManageMentors() {
 
   const handleSubmit = () => {
     // If not super admin and has a schoolId, use that instead of form data
-    const schoolIdToUse = user?.role !== UserRole.SUPER_ADMIN && user?.schoolId
-      ? user.schoolId
-      : formData.schoolId;
+    const schoolIdToUse =
+      user && String(user.role) !== 'super_admin' && user.schoolId && typeof user.schoolId === "object"
+        ? user.schoolId._id
+        : formData.schoolId;
 
     if (editingMentor) {
       const { name, email } = formData;
