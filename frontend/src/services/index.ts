@@ -1,16 +1,16 @@
 import axios from "axios";
 import { auth } from "../../firebaseConfig";
 
-const backendHost = import.meta.env.VITE_BACKEND_HOST || "http://localhost";
-const backendPort = import.meta.env.VITE_BACKEND_PORT || "5000";
+// const backendHost = import.meta.env.VITE_BACKEND_HOST || "http://localhost";
+// const backendPort = import.meta.env.VITE_BACKEND_PORT || "5000";
 
-if (!import.meta.env.VITE_BACKEND_HOST || !import.meta.env.VITE_BACKEND_PORT) {
-    console.warn(
-        "Environment variables VITE_BACKEND_HOST and/or VITE_BACKEND_PORT are not set. Using default values."
-    );
-}
+// if (!import.meta.env.VITE_BACKEND_HOST || !import.meta.env.VITE_BACKEND_PORT) {
+//     console.warn(
+//         "Environment variables VITE_BACKEND_HOST and/or VITE_BACKEND_PORT are not set. Using default values."
+//     );
+// }
 
-export const apiUrl = `${backendHost}:${backendPort}/api`;
+export const apiUrl = `https://demo.vidyamrit.in/api`;
 
 // Helper to get token
 export const getToken = async () => {
