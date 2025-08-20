@@ -47,14 +47,7 @@ import {
   ColumnDef,
   SortingState,
 } from "@tanstack/react-table";
-import {
-  Plus,
-  Edit,
-  Trash2,
-  Loader2,
-  ChevronLeft,
-  ChevronRight,
-} from "lucide-react";
+import { Plus, Edit, Trash2, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import {
   School,

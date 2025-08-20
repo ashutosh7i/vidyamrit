@@ -6,7 +6,7 @@ export const sendQuoteRequest = async (payload: {
   phone: string;
   email: string;
   company: string;
-  items: any[];
+  items: { [key: string]: unknown }[];
 }) => {
   // Send to /enquiry with quote as payload
   const response = await fetch(`${apiUrl}/enquiry`, {
@@ -34,7 +34,7 @@ export const createEnquiryLead = async (payload: {
   email: string;
   company: string;
   message: string;
-  quote?: any;
+  quote?: { items: { [key: string]: unknown }[] };
 }) => {
   const response = await fetch(`${apiUrl}/enquiry`, {
     method: 'POST',

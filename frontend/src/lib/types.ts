@@ -17,5 +17,5 @@ export interface User {
   name: string;
   email: string;
   role: UserRole;
-  school?: string; // school ID for non-super-admin users
+  school?: string | null; // school ID for non-super-admin users
 }
